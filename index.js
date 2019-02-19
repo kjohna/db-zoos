@@ -23,8 +23,7 @@ server.use(helmet());
 
 // list all table data
 server.get('/api/:table', async (req, res) => {
-  const table = req.params.table
-  console.log('table: ', table);
+  const table = req.params.table;
   try {
     const data = await db(table);
     res.status(200).json(data);
