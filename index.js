@@ -21,26 +21,29 @@ server.use(helmet());
 
 // endpoints here
 
-// list all zoos
-server.get('/api/zoos', async (req, res) => {
+// list all table data
+server.get('/api/:table', async (req, res) => {
+  const table = req.params.table
+  console.log('table: ', table);
   try {
-    const zoos = await db('zoos');
-    res.status(200).json(zoos);
+    const data = await db(table);
+    res.status(200).json(data);
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-// list zoo by id
-server.get('/api/zoos/:id', async (req, res) => {
+// list table data by id
+server.get('/api/:table/:id', async (req, res) => {
+  const table = req.params.table
   try {
-    const zoo = await db('zoos')
+    const data = await db(table)
       .where({ id: req.params.id })
       .first();
-    if (zoo) {
-      res.status(200).json(zoo);
+    if (data) {
+      res.status(200).json(data);
     } else {
-      res.status(404).json({ message: 'No zoo with that id!' });
+      res.status(404).json({ message: `No ${table} data with that id!` });
     }
   } catch (error) {
     res.status(500).json(error);
