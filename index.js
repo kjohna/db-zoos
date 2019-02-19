@@ -73,7 +73,23 @@ server.put('/api/zoos/:id', async (req, res) => {
         .first();
       res.status(200).json(updatedZoo);
     } else {
-      res.status(404).json({ message: 'No zoo with that id!'});
+      res.status(404).json({ message: 'No zoo with that id!' });
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// delete zoo
+server.delete('/api/zoos/:id', async (req, res) => {
+  try {
+    const numDeleted = await db('zoos')
+      .where({ id: req.params.id })
+      .del();
+    if (numDeleted > 0) {
+      res.status(204).end();
+    } else {
+      res.status(404).json({ message: 'No zoo with that id!' });
     }
   } catch (error) {
     res.status(500).json(error);
