@@ -35,7 +35,7 @@ server.get('/api/:table', async (req, res) => {
 
 // list table data by id
 server.get('/api/:table/:id', async (req, res) => {
-  const table = req.params.table
+  const table = req.params.table;
   try {
     const data = await db(table)
       .where({ id: req.params.id })
@@ -50,14 +50,15 @@ server.get('/api/:table/:id', async (req, res) => {
   }
 });
 
-// add zoo
-server.post('/api/zoos', async (req, res) => {
+// add item to table
+server.post('/api/:table', async (req, res) => {
+  const table = req.params.table;
   try {
-    const [id] = await db('zoos').insert(req.body);
-    const newZoo = await db('zoos')
+    const [id] = await db(table).insert(req.body);
+    const newItem = await db(table)
       .where({ id: id })
       .first();
-    res.status(201).json(newZoo);
+    res.status(201).json(newItem);
   } catch (error) {
     const msg = errors[error.errno] || error;
     res.status(500).json({ message: msg });
