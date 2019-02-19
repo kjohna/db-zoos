@@ -10,6 +10,9 @@ const knexConfig = {
   useNullAsDefault: true
 }
 const db = knex(knexConfig);
+const errors = {
+  '19': 'Another record with that value exists'
+}
 
 const server = express();
 
@@ -31,14 +34,30 @@ server.get('/api/zoos', async (req, res) => {
 // list zoo by id
 server.get('/api/zoos/:id', async (req, res) => {
   try {
-    const zoo = await db('zoos').where({ id: req.params.id });
-    if (zoo.length < 1) {
-      res.status(404).json({ message: 'No zoo with that id!' });
-    } else {
+    const zoo = await db('zoos')
+      .where({ id: req.params.id })
+      .first();
+    if (zoo) {
       res.status(200).json(zoo);
+    } else {
+      res.status(404).json({ message: 'No zoo with that id!' });
     }
   } catch (error) {
     res.status(500).json(error);
+  }
+});
+
+// add zoo
+server.post('/api/zoos', async (req, res) => {
+  try {
+    const [id] = await db('zoos').insert(req.body);
+    const newZoo = await db('zoos')
+      .where({ id: id })
+      .first();
+    res.status(201).json(newZoo);
+  } catch (error) {
+    const msg = errors[error.errno] || error;
+    res.status(500).json({ message: msg });
   }
 });
 
