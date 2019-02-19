@@ -65,19 +65,21 @@ server.post('/api/:table', async (req, res) => {
   }
 });
 
-// update zoo
-server.put('/api/zoos/:id', async (req, res) => {
+// update table item by id
+server.put('/api/:table/:id', async (req, res) => {
+  const table = req.params.table;
+  const id = req.params.id;
   try {
-    const numUpdated = await db('zoos')
-      .where({ id: req.params.id })
+    const numUpdated = await db(table)
+      .where({ id: id })
       .update(req.body);
     if (numUpdated > 0 ) {
-      const updatedZoo = await db('zoos')
-        .where({ id: req.params.id })
+      const updatedItem = await db(table)
+        .where({ id: id })
         .first();
-      res.status(200).json(updatedZoo);
+      res.status(200).json(updatedItem);
     } else {
-      res.status(404).json({ message: 'No zoo with that id!' });
+      res.status(404).json({ message: `No ${table} item with that id!` });
     }
   } catch (error) {
     res.status(500).json(error);
