@@ -86,16 +86,18 @@ server.put('/api/:table/:id', async (req, res) => {
   }
 });
 
-// delete zoo
-server.delete('/api/zoos/:id', async (req, res) => {
+// delete item from table by id
+server.delete('/api/:table/:id', async (req, res) => {
+  const table = req.params.table;
+  const id = req.params.id;
   try {
-    const numDeleted = await db('zoos')
-      .where({ id: req.params.id })
+    const numDeleted = await db(table)
+      .where({ id: id })
       .del();
     if (numDeleted > 0) {
       res.status(204).end();
     } else {
-      res.status(404).json({ message: 'No zoo with that id!' });
+      res.status(404).json({ message: `No ${table} item with that id!` });
     }
   } catch (error) {
     res.status(500).json(error);
